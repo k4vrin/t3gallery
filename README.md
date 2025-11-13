@@ -7,7 +7,7 @@
 - [x] Tidy up build process
 - [x] Actually set up database (vercel)
 - [x] Add authentication (clerk)
-- [ ] Add image upload 
+- [x] Add image upload 
 - [ ] "taint" server only
 - [ ] Error management (Sentry)
 - [ ] Routing/image page (parallel route)
