@@ -3,10 +3,9 @@ import { db } from "~/server/db";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const images = await db.query.images.findMany({
+  const images = await db.query.image.findMany({
     orderBy: (model, { desc }) => desc(model.createdAt),
   });
-  console.log("images", images);
 
   return (
     <main className="">

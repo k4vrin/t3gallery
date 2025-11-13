@@ -12,7 +12,7 @@ import { index, pgTableCreator } from "drizzle-orm/pg-core";
  */
 export const createTable = pgTableCreator((name) => `t3gallery_${name}`);
 
-export const images = createTable(
+export const image = createTable(
   "image",
   (d) => ({
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
