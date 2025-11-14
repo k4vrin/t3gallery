@@ -46,3 +46,6 @@ yarn-error.log*
 .idea
 /package-lock.json
 /pnpm-lock.yaml
+
+# Sentry Config File
+.env.sentry-build-plugin
