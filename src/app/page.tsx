@@ -1,5 +1,6 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { getMyImages } from "~/server/queries";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,20 @@ async function Images() {
   const images = await getMyImages();
 
   return (
-    <div className="flex flex-wrap">
+    <div className="flex flex-wrap justify-center">
       {images.map((image) => (
         <div key={image.id} className={"m-2 flex w-48 flex-col"}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={image.url} alt={"image"} />
-          <div>Name: {image.name}</div>
+          {/* Image container must be positioned when using `fill` */}
+          <div className="relative h-48 w-48">
+            <Image
+              src={image.url}
+              alt={image.name ?? "image"}
+              fill
+              style={{ objectFit: "contain" }}
+              // Optionally you can add `priority` for important images
+            />
+          </div>
+          <div className="mt-2 truncate text-sm">Name: {image.name}</div>
         </div>
       ))}
     </div>
