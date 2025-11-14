@@ -1,15 +1,15 @@
-import { db } from "~/server/db";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { getMyImages } from "~/server/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-
-
   return (
     <main className="">
       <SignedOut>
-        <div className="h-full w-full text-2x1 text-center">Please sign in above</div>
+        <div className="text-2x1 h-full w-full text-center">
+          Please sign in above
+        </div>
       </SignedOut>
       <SignedIn>
         <Images />
@@ -18,11 +18,8 @@ export default async function HomePage() {
   );
 }
 
-
 async function Images() {
-  const images = await db.query.image.findMany({
-    orderBy: (model, { desc }) => desc(model.createdAt),
-  });
+  const images = await getMyImages();
 
   return (
     <div className="flex flex-wrap">
@@ -34,6 +31,5 @@ async function Images() {
         </div>
       ))}
     </div>
-  )
+  );
 }
-
