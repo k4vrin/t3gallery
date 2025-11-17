@@ -1,6 +1,7 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { getMyImages } from "~/server/queries";
 import Image from "next/image";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +29,15 @@ async function Images() {
         <div key={image.id} className={"m-2 flex w-48 flex-col"}>
           {/* Image container must be positioned when using `fill` */}
           <div className="relative h-48 w-48">
-            <Image
-              src={image.url}
-              alt={image.name ?? "image"}
-              fill
-              style={{ objectFit: "contain" }}
-              // Optionally you can add `priority` for important images
-            />
+            <Link href={`/img/${image.id}`}>
+              <Image
+                src={image.url}
+                alt={image.name ?? "image"}
+                fill
+                style={{ objectFit: "contain" }}
+                // Optionally you can add `priority` for important images
+              />
+            </Link>
           </div>
           <div className="mt-2 truncate text-sm">Name: {image.name}</div>
         </div>
