@@ -25,7 +25,7 @@ async function Images() {
 
   return (
     <div className="flex flex-wrap justify-center gap-4 p-4">
-      {[...images, ...images, ...images, ...images].map((image) => (
+      {images.map((image) => (
         <div key={image.id} className={"m-2 flex w-48 flex-col"}>
           {/* Image container must be positioned when using `fill` */}
           <div className="relative h-48 w-48">
