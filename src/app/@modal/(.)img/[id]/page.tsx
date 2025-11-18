@@ -1,5 +1,3 @@
-import { getImageById } from "~/server/queries";
-import Image from "next/image";
 import { Modal } from "~/app/@modal/(.)img/[id]/modal";
 import FullPageImageView from "~/components/full-image-page";
 
@@ -15,7 +13,7 @@ export default async function PhotoModal({
   }
   return (
     <Modal>
-      <FullPageImageView id={idAsNumber}/>
+      <FullPageImageView id={idAsNumber} layout="modal" />
     </Modal>
   )
 }
