@@ -25,20 +25,19 @@ async function Images() {
 
   return (
     <div className="flex flex-wrap justify-center gap-4 p-4">
-      {images.map((image) => (
+      {images.map((image, index) => (
         <div key={image.id} className={"m-2 flex w-48 flex-col"}>
           {/* Image container must be positioned when using `fill` */}
-          <div className="relative h-48 w-48">
-            <Link href={`/img/${image.id}`}>
-              <Image
-                src={image.url}
-                alt={image.name ?? "image"}
-                fill
-                style={{ objectFit: "contain" }}
-                // Optionally you can add `priority` for important images
-              />
-            </Link>
-          </div>
+          <Link href={`/img/${image.id}`} className="relative h-48 w-48 block">
+            <Image
+              src={image.url}
+              alt={image.name ?? "image"}
+              fill
+              style={{ objectFit: "contain" }}
+              sizes="192px"
+              priority={index < 4}
+            />
+          </Link>
           <div className="mt-2 truncate text-sm">Name: {image.name}</div>
         </div>
       ))}

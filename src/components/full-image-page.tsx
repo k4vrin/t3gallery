@@ -1,8 +1,15 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { getImageById } from "~/server/queries";
+import { deleteImage, getImageById } from "~/server/queries";
+import { DeleteButton } from "./delete-button";
 
-const relativeFormatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-const relativeDivisions: { amount: number; unit: Intl.RelativeTimeFormatUnit }[] = [
+
+const relativeFormatter = new Intl.RelativeTimeFormat("en", {
+  numeric: "auto",
+});
+const relativeDivisions: {
+  amount: number;
+  unit: Intl.RelativeTimeFormatUnit;
+}[] = [
   { amount: 60, unit: "second" },
   { amount: 60, unit: "minute" },
   { amount: 24, unit: "hour" },
@@ -44,7 +51,16 @@ export default async function FullPageImageView({
   id,
   layout = "default",
 }: FullPageImageProps) {
-  const image = await getImageById(id);
+  let image;
+  try {
+    image = await getImageById(id);
+  } catch (e) {
+    return (
+      <div className="flex h-full min-h-screen w-full flex-col items-center justify-center bg-black text-white">
+        <h1 className="text-2xl font-bold">Image not found</h1>
+      </div>
+    );
+  }
   const client = await clerkClient();
   const uploaderInfo = await client.users.getUser(image.userId);
 
@@ -85,13 +101,15 @@ export default async function FullPageImageView({
       <div
         className={`relative z-10 flex w-full flex-1 ${
           isModal
-            ? "flex-row flex-wrap items-start justify-center gap-6 py-4 sm:justify-between max-w-4xl"
-            : "flex-row flex-wrap items-start justify-center gap-10 py-8 lg:justify-between max-w-6xl"
+            ? "max-w-4xl flex-row flex-wrap items-start justify-center gap-6 py-4 sm:justify-between"
+            : "max-w-6xl flex-row flex-wrap items-start justify-center gap-10 py-8 lg:justify-between"
         }`}
       >
         <div
           className={`flex items-center justify-center px-0 ${
-            isModal ? "min-h-[45vh] flex-[1_1_55%]" : "min-h-[60vh] flex-[2_1_60%]"
+            isModal
+              ? "min-h-[45vh] flex-[1_1_55%]"
+              : "min-h-[60vh] flex-[2_1_60%]"
           }`}
         >
           <div className="group relative flex w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-4 shadow-2xl shadow-black/60 backdrop-blur">
@@ -112,7 +130,9 @@ export default async function FullPageImageView({
           }`}
         >
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-white/50">Artwork</p>
+            <p className="text-xs tracking-[0.3em] text-white/50 uppercase">
+              Artwork
+            </p>
             <h1 className="text-2xl font-semibold">{image.name}</h1>
             <p className="text-white/60">{relativeCreatedLabel}</p>
           </div>
@@ -130,7 +150,9 @@ export default async function FullPageImageView({
               </span>
             )}
             <div className="flex flex-col">
-              <span className="text-xs uppercase tracking-[0.2em] text-white/50">Artist</span>
+              <span className="text-xs tracking-[0.2em] text-white/50 uppercase">
+                Artist
+              </span>
               <span className="text-lg font-semibold">{uploaderName}</span>
               {uploaderInfo.username && (
                 <span className="text-white/60">@{uploaderInfo.username}</span>
@@ -140,20 +162,28 @@ export default async function FullPageImageView({
 
           <dl
             className={`grid gap-4 text-sm ${
-              isModal ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              isModal
+                ? "grid-cols-1 sm:grid-cols-2"
+                : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
             }`}
           >
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <dt className="text-xs uppercase tracking-[0.2em] text-white/50">Uploaded</dt>
+              <dt className="text-xs tracking-[0.2em] text-white/50 uppercase">
+                Uploaded
+              </dt>
               <dd className="text-base font-medium">{absoluteCreatedLabel}</dd>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <dt className="text-xs uppercase tracking-[0.2em] text-white/50">File type</dt>
+              <dt className="text-xs tracking-[0.2em] text-white/50 uppercase">
+                File type
+              </dt>
               <dd className="text-base font-medium">{fileExtension}</dd>
             </div>
             {imageHost && (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <dt className="text-xs uppercase tracking-[0.2em] text-white/50">Storage</dt>
+                <dt className="text-xs tracking-[0.2em] text-white/50 uppercase">
+                  Storage
+                </dt>
                 <dd className="text-base font-medium">{imageHost}</dd>
               </div>
             )}
@@ -161,8 +191,8 @@ export default async function FullPageImageView({
 
           <div className="rounded-2xl border border-white/10 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 p-4">
             <p className="text-sm text-white/80">
-              Want to see this image outside the gallery view? Download the original and share it
-              with your audience.
+              Want to see this image outside the gallery view? Download the
+              original and share it with your audience.
             </p>
             <a
               href={image.url}
@@ -173,6 +203,14 @@ export default async function FullPageImageView({
               Open original
             </a>
           </div>
+
+          <DeleteButton
+            id={id}
+            onDelete={async (id) => {
+              "use server";
+              await deleteImage(id);
+            }}
+          />
         </aside>
       </div>
     </div>

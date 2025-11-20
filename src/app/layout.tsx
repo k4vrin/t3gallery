@@ -8,6 +8,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "~/app/api/uploadthing/core";
 import { Toaster } from "~/components/ui/sonner";
+import { PostHogProvider } from "~/app/_analytics/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,26 +30,28 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${inter.variable}`}>
-        <NextSSRPlugin
-          /**
-           * The `extractRouterConfig` will extract **only** the route configs
-           * from the router to prevent additional information from being
-           * leaked to the client. The data passed to the client is the same
-           * as if you were to fetch `/api/uploadthing` directly.
-           */
-          routerConfig={extractRouterConfig(ourFileRouter)}
-        />
-        <body className={`font-sans ${inter.variable}`}>
-          <div className={"grid h-screen grid-rows-[auto_1fr]"}>
-            <TopNav />
-            <main className="overflow-y-scroll">{children}</main>
-          </div>
+      <PostHogProvider>
+        <html lang="en" className={`${inter.variable}`}>
+          <NextSSRPlugin
+            /**
+             * The `extractRouterConfig` will extract **only** the route configs
+             * from the router to prevent additional information from being
+             * leaked to the client. The data passed to the client is the same
+             * as if you were to fetch `/api/uploadthing` directly.
+             */
+            routerConfig={extractRouterConfig(ourFileRouter)}
+          />
+          <body className={`font-sans ${inter.variable}`}>
+            <div className={"grid h-screen grid-rows-[auto_1fr]"}>
+              <TopNav />
+              <main className="overflow-y-scroll">{children}</main>
+            </div>
 
-          <div id="modal-root">{modal}</div>
-        <Toaster/>
-        </body>
-      </html>
+            <div id="modal-root">{modal}</div>
+            <Toaster />
+          </body>
+        </html>
+      </PostHogProvider>
     </ClerkProvider>
   );
 }

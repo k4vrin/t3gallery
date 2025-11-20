@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useUploadThing } from "~/utils/uploadthing";
 import { toast } from "sonner";
 import { func } from "fast-check";
+import { usePostHog } from "posthog-js/react";
 
 type UploadVisualState =
   | "idle"
@@ -104,6 +105,7 @@ export default function SimpleUploadButton() {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const resetTimerRef = React.useRef<NodeJS.Timeout | null>(null);
   const fileCountRef = React.useRef(0);
+  const posthog = usePostHog()
 
   const [visualState, setVisualState] = React.useState<VisualState>({
     value: "idle",
@@ -137,6 +139,7 @@ export default function SimpleUploadButton() {
 
   const { startUpload, routeConfig } = useUploadThing("imageUploader", {
     onUploadBegin: () => {
+      posthog.capture("upload_begin")
       maleUploadToast()
       const label = formatCountLabel(fileCountRef.current);
       setVisualState({
